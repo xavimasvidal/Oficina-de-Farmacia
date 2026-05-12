@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de preus - Oficina de Farmàcia</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <section class="hero">
+      <img class="corner-logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%231f7a6d' width='100' height='100' rx='10'/%3E%3Ctext x='50' y='60' font-size='50' fill='white' text-anchor='middle' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E" alt="Logo" />
+      <h1>Calculadora de preus, marges i condicions comercials</h1>
+      <p>Recurs didàctic per a alumnat del CFGM de Farmàcia i Parafarmàcia.</p>
+    </section>
+
+    <!-- SECCIÓN 1: CLASIFICACIÓN -->
+    <section class="card">
+      <h2>1. Identificació inicial del producte</h2>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="productName">Nom del producte</label>
+          <input id="productName" type="text" placeholder="Ex.: Paracetamol 500 mg" />
+        </div>
+        <div class="field">
+          <label for="nationalCode">Codi nacional</label>
+          <input id="nationalCode" type="text" inputmode="numeric" placeholder="Ex.: 712345" />
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <div class="inline-actions">
+            <button id="classifyBtn">Classificar producte</button>
+            <button id="resetBtn" class="secondary-btn">Reiniciar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="category">Categoria detectada</label>
+          <input id="category" type="text" readonly />
+        </div>
+        <div class="field">
+          <label for="ivaRate">IVA aplicable (%)</label>
+          <select id="ivaRate">
+            <option value="4">4%</option>
+            <option value="10">10%</option>
+            <option value="21" selected>21%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="reRate">Recàrrec d'equivalència (%)</label>
+          <input id="reRate" type="number" min="0" step="0.01" value="5.2" />
+        </div>
+      </div>
+
+      <div id="classificationResult" class="result">
+        Encara no s'ha classificat cap producte.
+      </div>
+    </section>
+
+    <!-- PESTAÑAS -->
+    <div class="tabs" aria-label="Pestanyes de càlcul">
+      <button class="tab-btn active" data-tab="tab1">1. Marges i cadena de preus</button>
+      <button class="tab-btn" data-tab="tab2">2. Condicions comercials</button>
+      <button class="tab-btn" data-tab="tab3">3. IVA i RE</button>
+    </div>
+
+    <!-- TAB 1: MÁRGENES Y CADENA -->
+    <section id="tab1" class="tab-panel active">
+      <div class="grid grid-2">
+        <article class="card">
+          <h2>Cadena PVL → PVM → PVP</h2>
+          <div class="field">
+            <label for="knownPriceType">Preu conegut</label>
+            <select id="knownPriceType">
+              <option value="PVL">PVL</option>
+              <option value="PVM">PVM</option>
+              <option value="PVP">PVP</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="knownPriceValue">Import conegut (€)</label>
+            <input id="knownPriceValue" type="number" min="0" step="0.01" placeholder="Ex.: 15.00" />
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="distMargin">Marge distribuïdor (%)</label>
+              <input id="distMargin" type="number" min="0" step="0.01" value="7.6" />
+            </div>
+            <div class="field">
+              <label for="pharmMargin">Marge oficina (%)</label>
+              <input id="pharmMargin" type="number" min="0" step="0.01" value="27.9" />
+            </div>
+          </div>
+          <button id="chainBtn">Calcular cadena de preus</button>
+          <div id="chainResult" class="result">Introdueix un preu conegut.</div>
+        </article>
+
+        <article class="card">
+          <h2>Marge comercial</h2>
+          <div class="grid grid-2">
+            <div>
+              <h3>Calcular marge</h3>
+              <div class="field">
+                <label for="costPrice">Preu cost (€)</label>
+                <input id="costPrice" type="number" min="0" step="0.01" />
+              </div>
+              <div class="field">
+                <label for="salePrice">Preu final (€)</label>
+                <input id="salePrice" type="number" min="0" step="0.01" />
+              </div>
+              <button id="marginBtn">Calcular marge</button>
+              <div id="marginResult" class="result">Resultat aquí.</div>
+            </div>
+
+            <div>
+              <h3>Fixar preu final desitjat</h3>
+              <div class="field">
+                <label for="costForTarget">Preu cost (€)</label>
+                <input id="costForTarget" type="number" min="0" step="0.01" />
+              </div>
+              <div class="field">
+                <label for="targetMargin">Marge desitjat (%)</label>
+                <input id="targetMargin" type="number" min="0" max="99.99" step="0.01" />
+              </div>
+              <button id="targetPriceBtn">Calcular preu final</button>
+              <div id="targetPriceResult" class="result">Resultat aquí.</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TAB 2: CONDICIONES COMERCIALES -->
+    <section id="tab2" class="tab-panel">
+      <div class="grid grid-3">
+        <article class="card">
+          <h2>Descompte comercial</h2>
+          <div class="field">
+            <label for="discUnitPrice">Preu unitari base (€)</label>
+            <input id="discUnitPrice" type="number" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="discUnits">Unitats</label>
+            <input id="discUnits" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="field">
+            <label for="discountRate">Descompte (%)</label>
+            <input id="discountRate" type="number" min="0" step="0.01" />
+          </div>
+          <button id="discountBtn">Aplicar descompte</button>
+          <div id="discountResult" class="result">Introdueix dades.</div>
+        </article>
+
+        <article class="card">
+          <h2>Bonificació</h2>
+          <div class="field">
+            <label for="bonusUnitPrice">Preu unitari (€)</label>
+            <input id="bonusUnitPrice" type="number" min="0" step="0.01" />
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="bonusPaid">Unitats pagades</label>
+              <input id="bonusPaid" type="number" min="1" step="1" value="10" />
+            </div>
+            <div class="field">
+              <label for="bonusFree">Unitats bonificades</label>
+              <input id="bonusFree" type="number" min="0" step="1" value="2" />
+            </div>
+          </div>
+          <button id="bonusBtn">Calcular bonificació</button>
+          <div id="bonusResult" class="result">Introdueix dades.</div>
+        </article>
+
+        <article class="card">
+          <h2>Cas combinat</h2>
+          <div class="field">
+            <label for="comboUnitPrice">Preu unitari base (€)</label>
+            <input id="comboUnitPrice" type="number" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="comboUnits">Unitats</label>
+            <input id="comboUnits" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="surchargeRate">Recàrrec comercial (%)</label>
+              <input id="surchargeRate" type="number" min="0" step="0.01" value="0" />
+            </div>
+            <div class="field">
+              <label for="comboDiscountRate">Descompte posterior (%)</label>
+              <input id="comboDiscountRate" type="number" min="0" step="0.01" value="0" />
+            </div>
+          </div>
+          <button id="comboBtn">Calcular cas combinat</button>
+          <div id="comboResult" class="result">Introdueix dades.</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TAB 3: IVA Y RE -->
+    <section id="tab3" class="tab-panel">
+      <div class="grid grid-2">
+        <article class="card">
+          <h2>Aplicar IVA i RE</h2>
+          <div class="field">
+            <label for="taxScenario">Escenari</label>
+            <select id="taxScenario">
+              <option value="lab">Compra al laboratori (PVL + IVA + RE)</option>
+              <option value="wholesaler">Compra al majorista (PVM + IVA + RE)</option>
+              <option value="public">Venda al públic (PVP + IVA)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="taxBasePrice">Preu base unitari (€)</label>
+            <input id="taxBasePrice" type="number" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="taxUnits">Unitats</label>
+            <input id="taxUnits" type="number" min="1" step="1" value="1" />
+          </div>
+          <button id="taxBtn">Calcular imposts</button>
+          <div id="taxResult" class="result">Introdueix dades.</div>
+        </article>
+
+        <article class="card">
+          <h2>Paràmetres fiscals actius</h2>
+          <div id="activeTaxSummary" class="result">IVA actiu: 21% · RE actiu: 5,2%</div>
+          <div class="warning-box">
+            Els valors d'IVA i RE es podem modificar manualment per casos especials.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <p class="footer-note">Recurs docent. Basada en tema 5 d'aprovisionament i preus.</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
